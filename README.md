@@ -1,1 +1,4 @@
-# cloud-computing
+My project is a recipe website, that displays the instructs and ingredient list of each of the recipes that I added. Recently my website displays three whicg are cinnamon apple pancakes, vanilla cake and smores cookies. Each of the recipes also display table with cook time. pre time and total for each of the recipes, also well as a video if available of how to make said recipe 
+
+There is the home page that contains a greating a description of the website. 
+There is a navagivation bar that is displayed throughout every page. If you hover over the 'recipes' it will display the name of the reicpes that you can view. You are also able to view this recipe by clicking 'recipes' in the navagation bar where will be direct to a page with description of each recipe which can be viewed if the user clicks on the recipe name. 
