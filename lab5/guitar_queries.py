@@ -2,25 +2,25 @@ from typing import Any, Dict, List
 import mysql.connector
 
 def connect_to_db():
-    mydb = None  # Initialize mydb outside try block
+    mydb = None
     try:
         mydb = mysql.connector.connect(
             host="localhost",
             user="root",
-            password="C@t23321",  # Add your MySQL password
+            password="C@t23321",
             database="my_guitar_shop"
         )
         print("Successfully connected to MySQL database!")
     except mysql.connector.Error as err:
         print(f"Error connecting to MySQL: {err}")
-        return None  # Return None if connection fails
+        return None
     
     return mydb
 
 def query1(mydb) :
     if mydb is None:
         print("No database connection available")
-        return []  # Return empty list instead of None
+        return []
 
     mycursor = None
     try:
@@ -37,41 +37,35 @@ def query1(mydb) :
         for row in results:
             print(f"product_code: {row[0]}, product_name: {row[1]}, list_price: {row[2]}, discount_percent: {row[3]}")
         
-        return results  # ADD THIS LINE
+        return results
 
     except mysql.connector.Error as err:
         print(f"Error: {err}")
-        return []  # Return empty list on error
+        return []
     finally:
         if mycursor:
             mycursor.close()
 
 def query_addresses(mydb):
-    if mydb is None:  # Check if connection failed
+    if mydb is None:
         print("No database connection available")
         return
         
     try:
-        # Create a cursor object to execute SQL queries
         mycursor = mydb.cursor()
 
-        # Define the SQL SELECT query
         sql_query = "select address_id, line1 from addresses a"
 
-        # Execute the query
         mycursor.execute(sql_query)
 
-        # Fetch all the results
         results = mycursor.fetchall()
 
-        # Iterate through the fetched results and print them
         for row in results:
             print(f"address_id: {row[0]}, address_line1: {row[1]}")
 
     except mysql.connector.Error as err:
         print(f"Error: {err}")
     finally:
-        # Close the cursor and the database connection
         if mydb and mydb.is_connected():
             mydb.close()
         print("MySQL connection closed.")
@@ -80,7 +74,7 @@ def query2(mydb):
     """Query customers with last names between M and Zz"""
     if mydb is None:
         print("No database connection available")
-        return []  # Return empty list instead of None
+        return []
 
     mycursor = None
     try:
@@ -99,11 +93,11 @@ def query2(mydb):
         for row in results:
             print(f"first_name: {row[0]}, last_name: {row[1]}, full_name: {row[2]}")
         
-        return results  # ADD THIS LINE
+        return results 
 
     except mysql.connector.Error as err:
         print(f"Error: {err}")
-        return []  # Return empty list on error
+        return []
     finally:
         if mycursor:
             mycursor.close()
@@ -130,8 +124,7 @@ def query3(mydb):
         for row in results:
             print(f"product_name: {row[0]}, list_price: {row[1]}, date_added: {row[2]}")
         
-        return results  # ADD THIS LINE
-
+        return results 
     except mysql.connector.Error as err:
         print(f"Error: {err}")
         return []
@@ -164,7 +157,7 @@ def query4(mydb):
         for row in results:
             print(f"item_id: {row[0]}, item_price: {row[1]}, discount_amount: {row[2]}, quantity: {row[3]}, price_total: {row[4]}, discount_total: {row[5]}, item_total: {row[6]}")
         
-        return results  # ADD THIS LINE
+        return results 
 
     except mysql.connector.Error as err:
         print(f"Error: {err}")
@@ -197,7 +190,7 @@ def query5(mydb):
         for row in results:
             print(f"category_name: {row[0]}, product_name: {row[1]}, list_price: {row[2]}")
         
-        return results  # ADD THIS LINE
+        return results  
 
     except mysql.connector.Error as err:
         print(f"Error: {err}")
@@ -229,7 +222,7 @@ def query6(mydb):
         for row in results:
             print(f"first_name: {row[0]}, last_name: {row[1]}, line1: {row[2]}, city: {row[3]}, state: {row[4]}, zip_code: {row[5]}")
         
-        return results  # ADD THIS LINE
+        return results
 
     except mysql.connector.Error as err:
         print(f"Error: {err}")
@@ -248,9 +241,9 @@ def query7(mydb):
     try:
         mycursor = mydb.cursor()
         sql_query = """
-            select first_name, last_name, line1, city, state, zip_code 
-            from customers c 
-            join addresses a on c.customer_id = a.customer_id
+            select first_name, last_name , line1, city, state, zip_code
+            from customers c
+            join addresses a on c.shipping_address_id = a.address_id 
             order by zip_code asc;
         """
         mycursor.execute(sql_query)
@@ -260,7 +253,7 @@ def query7(mydb):
         for row in results:
             print(f"first_name: {row[0]}, last_name: {row[1]}, line1: {row[2]}, city: {row[3]}, state: {row[4]}, zip_code: {row[5]}")
         
-        return results  # ADD THIS LINE
+        return results 
 
     except mysql.connector.Error as err:
         print(f"Error: {err}")
@@ -280,7 +273,6 @@ def main():
         query6(mydb)
         query7(mydb)
         
-        # Close the main connection ONLY after all queries
         if mydb.is_connected():
             mydb.close()
             print("\nMain MySQL connection closed.")

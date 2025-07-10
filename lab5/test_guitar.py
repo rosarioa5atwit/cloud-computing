@@ -7,11 +7,8 @@ class TestGuitarQueries(unittest.TestCase):
 
     @patch('mysql.connector.connect')
     def test_connect_to_db(self, mock_connect):
-        # Arrange
         mock_connect.return_value = MagicMock()
-        # Act
         db = connect_to_db()
-        # Assert
         self.assertIsNotNone(db)
         mock_connect.assert_called_once_with(
             host="localhost",
@@ -22,7 +19,6 @@ class TestGuitarQueries(unittest.TestCase):
 
     @patch('mysql.connector.connect')
     def test_query1(self, mock_connect):
-        # Arrange
         mock_db = MagicMock()
         mock_connect.return_value = mock_db
         mock_cursor = MagicMock()
@@ -42,18 +38,15 @@ class TestGuitarQueries(unittest.TestCase):
         ]
         mock_cursor.fetchall.return_value = expected_results
         
-        # Act
         actual_results = query1(mock_db)
         
-        # Assert
-        self.assertEqual(actual_results, expected_results)  # Test the return value
+        self.assertEqual(actual_results, expected_results)
         mock_cursor.execute.assert_called_once()
         mock_cursor.fetchall.assert_called_once()
         mock_cursor.close.assert_called_once()
 
     @patch('mysql.connector.connect')
     def test_query2(self, mock_connect):    
-        # Arrange
         mock_db = MagicMock()
         mock_connect.return_value = mock_db
         mock_cursor = MagicMock()
@@ -67,18 +60,15 @@ class TestGuitarQueries(unittest.TestCase):
         ]
         mock_cursor.fetchall.return_value = expected_results
         
-        # Act
         actual_results = query2(mock_db)
         
-        # Assert
-        self.assertEqual(actual_results, expected_results)  # Test the return value
+        self.assertEqual(actual_results, expected_results)
         mock_cursor.execute.assert_called_once()
         mock_cursor.fetchall.assert_called_once()
         mock_cursor.close.assert_called_once()
 
     @patch('mysql.connector.connect')
     def test_query3(self, mock_connect):    
-        # Arrange
         mock_db = MagicMock()
         mock_connect.return_value = mock_db
         mock_cursor = MagicMock()
@@ -93,18 +83,15 @@ class TestGuitarQueries(unittest.TestCase):
         ]
         mock_cursor.fetchall.return_value = expected_results
         
-        # Act
         actual_results = query3(mock_db)
         
-        # Assert
-        self.assertEqual(actual_results, expected_results)  # Test the return value
+        self.assertEqual(actual_results, expected_results)
         mock_cursor.execute.assert_called_once()
         mock_cursor.fetchall.assert_called_once()
         mock_cursor.close.assert_called_once()
 
     @patch('mysql.connector.connect')
     def test_query4(self, mock_connect):    
-        # Arrange
         mock_db = MagicMock()
         mock_connect.return_value = mock_db
         mock_cursor = MagicMock()
@@ -119,18 +106,15 @@ class TestGuitarQueries(unittest.TestCase):
         ]
         mock_cursor.fetchall.return_value = expected_results
         
-        # Act
         actual_results = query4(mock_db)
         
-        # Assert
-        self.assertEqual(actual_results, expected_results)  # Test the return value
+        self.assertEqual(actual_results, expected_results)
         mock_cursor.execute.assert_called_once()
         mock_cursor.fetchall.assert_called_once()
         mock_cursor.close.assert_called_once()
 
     @patch('mysql.connector.connect')
     def test_query5(self, mock_connect):    
-        # Arrange
         mock_db = MagicMock()
         mock_connect.return_value = mock_db
         mock_cursor = MagicMock()
@@ -150,18 +134,15 @@ class TestGuitarQueries(unittest.TestCase):
         ]
         mock_cursor.fetchall.return_value = expected_results
         
-        # Act
         actual_results = query5(mock_db)
         
-        # Assert
-        self.assertEqual(actual_results, expected_results)  # Test the return value
+        self.assertEqual(actual_results, expected_results)
         mock_cursor.execute.assert_called_once()
         mock_cursor.fetchall.assert_called_once()
         mock_cursor.close.assert_called_once()
 
     @patch('mysql.connector.connect')
     def test_query6(self, mock_connect):    
-        # Arrange
         mock_db = MagicMock()
         mock_connect.return_value = mock_db
         mock_cursor = MagicMock()
@@ -173,18 +154,15 @@ class TestGuitarQueries(unittest.TestCase):
         ]
         mock_cursor.fetchall.return_value = expected_results
         
-        # Act
         actual_results = query6(mock_db)
         
-        # Assert
-        self.assertEqual(actual_results, expected_results)  # Test the return value
+        self.assertEqual(actual_results, expected_results)
         mock_cursor.execute.assert_called_once()
         mock_cursor.fetchall.assert_called_once()
         mock_cursor.close.assert_called_once()
 
     @patch('mysql.connector.connect')
     def test_query7(self, mock_connect):    
-        # Arrange
         mock_db = MagicMock()
         mock_connect.return_value = mock_db
         mock_cursor = MagicMock()
@@ -192,25 +170,19 @@ class TestGuitarQueries(unittest.TestCase):
         
         expected_results = [
             ('Allan', 'Sherwood', '100 East Ridgewood Ave.', 'Paramus', 'NJ', '07652'),
-            ('Allan', 'Sherwood', '21 Rosewood Rd.', 'Woodcliff Lake', 'NJ', '07677'),
             ('Gary', 'Hernandez', '7361 N. 41st St.', 'New York', 'NY', '10012'),
-            ('Gary', 'Hernandez', '3829 Broadway Ave.', 'New York', 'NY', '10012'),
             ('Barry', 'Zimmer', '16285 Wendell St.', 'Omaha', 'NE', '68135'),
             ('Frank Lee', 'Wilson', '23 Mountain View St.', 'Denver', 'CO', '80208'),
             ('Heather', 'Esway', '2381 Buena Vista St.', 'Los Angeles', 'CA', '90023'),
-            ('Heather', 'Esway', '291 W. Hollywood Blvd.', 'Los Angeles', 'CA', '90024'),
             ('Erin', 'Valentino', '6982 Palm Ave.', 'Fresno', 'CA', '93711'),
             ('David', 'Goldstein', '186 Vermont St.', 'San Francisco', 'CA', '94110'),
-            ('David', 'Goldstein', '1374 46th Ave.', 'San Francisco', 'CA', '94129'),
             ('Christine', 'Brown', '19270 NW Cornell Rd.', 'Beaverton', 'OR', '97006')
         ]
         mock_cursor.fetchall.return_value = expected_results
         
-        # Act
         actual_results = query7(mock_db)
         
-        # Assert
-        self.assertEqual(actual_results, expected_results)  # Test the return value
+        self.assertEqual(actual_results, expected_results)
         mock_cursor.execute.assert_called_once()
         mock_cursor.fetchall.assert_called_once()
         mock_cursor.close.assert_called_once()
