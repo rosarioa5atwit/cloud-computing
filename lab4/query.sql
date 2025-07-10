@@ -36,5 +36,5 @@ order by zip_code asc;
 
 select first_name, last_name , line1, city, state, zip_code
 from customers c
-join addresses a on c.customer_id = a.customer_id
+join addresses a on c.shipping_address_id = a.address_id 
 order by zip_code asc;
