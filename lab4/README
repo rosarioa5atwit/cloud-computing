@@ -1,0 +1,7 @@
+In this project we were instructed to write queries for a relational database in Dbeaver (Guitar shop which we were provided the code for). The queries that I wrote were designed based on the information that we where give in the lab document.
+
+I created a file called query.sql that hold all the query that we were instructed to write.
+
+To excute this script you have guitershop database set up in  the cloud computing brightspace under sql scripts. After that you need to right click on "my_guitar_shop" then select "SQL editor" and select "New SQL script". Then copy and paste the whole query.sql in the DBeaver. To run each script to have to select each query independently ( the queries are seperated by a line) and "Excute SQL Script". 
+
+Screenshots can be found in the screenshots folder under lab 4 
