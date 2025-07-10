@@ -1,0 +1,26 @@
+In this lab we were task with creating a NodeJs Express Application. Using the project from lab 1 we were tasked with serving the main html page. We had to create a minimum of 5 routes that contain Query strings parameters or query path parameters.
+
+To run this application you have to type "node lab2\app.js" Then you will go to " http://localhost:3030" and based on the corresponding route. The following is a description of all handlers and how to use them.
+
+Route 1
+Example http://localhost:3030/category/cake
+This route is designed to display recipe information based the category name. The route uses a path parameter categoryname to capture the category name. it than uses a random number genetor to generate a cook Time and serving size.
+
+Route 2
+Example localhost:3030/convertor?amount=2&from=galloon&to=quarts
+This route is designed to display and calculate the convertion of different amounts. It extract amount, fom and to from the query parameters and them it converts the input to cups than it convert is to the target convertion. It then displays the convertion.
+
+Route 3
+Example  http://localhost:3030/weather?city=London&days=3
+This route is designed to display a mock weather forcast based on city and how many based that it the user wants the forcast for. It caps the forecast day to 7 aka a week. It then uses a random number generator for the temperture and the conditions.
+
+Route 4
+Example  http://localhost:3030/generator?number=5
+This route is designed to display  random numbers form 0 to 99 based on the extract from number it will give the user that amount of random numbers.
+
+Route 5 
+Example  http://localhost:3030/prime?number=29
+This route is designed to display weather the number extracted from number is prime or not. It does this by calcaltuing if there is a factor of that other than one or itself and then it displays a message.
+
+screenshots in the screenshoots folder under lab 2
+
