@@ -1,0 +1,21 @@
+This project is a FastAPIUvicorn Appliations foe a CD management store management system. This applications has mulitple routes. It also uses data from a stagment database so it reset the data when the server resets. 
+
+To use this application go to lab3 and type in "python main.py", a menu will pop up type "2" in the terminal. After that http://localhost:8000/docs this is where you can view and change the data. 
+
+CD Management
+For CD Management, you can retrieve a specific CD by its ID using GET /cds/{cd_id}, which returns full CD details or a 404 error if not found. To search and filter the CD collection, use GET /cds with query parameters like cd_id, title, artist, release_date, category_id, and limit to get a list of matching CDs. To update an existing CD, use PUT /cd/update/{cd_id}, providing the CD ID and the new data in the request body. This route returns a success message and the updated CD information, or a 404 if the CD doesn't exist.
+
+Customer Management
+The Customer Management Routes allow you to retrieve a customer's profile with GET /customers/{customer_id}, returning their name and email, or a 404 if the customer is not found. To search the customer database, use GET /customers with query parameters such as customer_id, first_name, last_name, email, and limit. To update customer information, use PUT /customers/update/{customer_id}, providing the customer ID and updated data in the request body, which returns a confirmation and the updated profile, or a 404 if the customer doesn't exist.
+
+Order Management
+For Order Management, GET /orders/{order_id} retrieves detailed information for a specific order, including customer, date, and total amount, or a 404 if the order is not found. You can search and filter order history using GET /orders with order_id, customer_id, and limit query parameters. To modify existing order information, use PUT /orders/update/{order_id}, providing the order ID and updated data in the request body, which returns a success confirmation and the updated order details, or a 404 if the order doesn't exist.
+
+Order Item Management
+The Order Items Routes allow you to get specific line item details from an order with GET /orderItems/{order_item_id}, returning CD details, quantity, and price, or a 404 if the item is not found. To search through order line items, use GET /orderItems with query parameters like order_item_id, order_id, cd_id, and limit. To update order line item details, use PUT /ordersItem/update/{order_item_id}, providing the item ID and updated data in the request body, which returns a confirmation and updated item information, or a 404 if the order item doesn't exist.
+
+Address Management
+For Address Management, GET /addresses/{address_id} retrieves specific customer address information, or a 404 if the address is not found. To search the customer address database, use GET /addresses with address_id, customer_id, and limit query parameters. To update customer address information, use PUT /addresses/update/{address_id}, providing the address ID and updated data in the request body, which returns a success message and the updated address, or a 404 if the address doesn't exist.
+
+Category Management
+The Category Management Routes enable you to get information about a specific music category with GET /categories/{category_id}, returning category details or a 404 if the category is not found. To browse and search music categories, use GET /categories with category_id, name, and limit query parameters. To update category information, use PUT /categories/update/{category_id}, providing the category ID and updated data in the request body, which returns a confirmation and updated category information, or a 404 if the category doesn't exist
