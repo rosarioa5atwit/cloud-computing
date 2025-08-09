@@ -1,56 +1,16 @@
 from datetime import datetime
-from fastapi import FastAPI, HTTPException, Depends
-import mysql.connector
-from mysql.connector import Error
+from fastapi import FastAPI, HTTPException, Query, Path, Body
 from pydantic import BaseModel
 from typing import Optional, List
 from dotenv import load_dotenv
 import os
-from contextlib import contextmanager
+from driver import get_db_connection, get_db_cursor
 
 load_dotenv()
 app = FastAPI()
 
-# MySQL Configuration (from your DBeaver screenshot)
-DB_CONFIG = {
-    "host": "localhost",
-    "port": 3306,
-    "user": "root",  # Replace with your actual username
-    "password": "C@t23321",  # Replace with your actual password
-    "database": "my_guitar_shop"
-}
-
-# Database Connection Manager
-@contextmanager
-def get_db_connection():
-    conn = None
-    try:
-        conn = mysql.connector.connect(**DB_CONFIG)
-        yield conn
-    except Error as e:
-        print(f"MySQL Connection Error: {e}")
-        raise HTTPException(status_code=500, detail="Database connection failed")
-    finally:
-        if conn and conn.is_connected():
-            conn.close()
-
-# Database Cursor Manager
-@contextmanager
-def get_db_cursor(dictionary=True):
-    with get_db_connection() as conn:
-        cursor = conn.cursor(dictionary=dictionary)
-        try:
-            yield cursor
-            conn.commit()
-        except Error as e:
-            conn.rollback()
-            print(f"MySQL Error: {e}")
-            raise HTTPException(status_code=500, detail="Database operation failed")
-        finally:
-            cursor.close()
-
-# Pydantic Models (same as before)
-class Product(BaseModel):  # Renamed from Item to Product
+# Pydantic Models for API data validation
+class Product(BaseModel):
     product_id: int
     category_id: int
     product_code: str
@@ -60,7 +20,7 @@ class Product(BaseModel):  # Renamed from Item to Product
     discount_percent: float
     date_added: datetime
 
-class Item(BaseModel):  # Keep this if you have an items table, or remove it
+class Item(BaseModel):
    item_id: int
    order_id: int
    product_id: int
@@ -68,7 +28,7 @@ class Item(BaseModel):  # Keep this if you have an items table, or remove it
    discount_percent: float
    quantity: int
 
-class address(BaseModel):
+class Address(BaseModel):
     address_id: int
     line1: str
     line2: str
@@ -78,7 +38,7 @@ class address(BaseModel):
     phone: str
     disabled: int
 
-class category(BaseModel):
+class Category(BaseModel):
     category_id: int
     category_name: str
 
@@ -94,7 +54,7 @@ class Customer(BaseModel):
 class Order(BaseModel):
     order_id: int
     customer_id: int
-    order_date: datetime  # Changed to string for MySQL date handling
+    order_date: datetime  
     ship_amount: float
     tax_amount: float
     ship_date: datetime
@@ -103,6 +63,7 @@ class Order(BaseModel):
     card_number: str
     card_expires: str
     billing_address_id: int
+
 @app.get("/")
 async def root():
     return {
@@ -114,7 +75,8 @@ async def root():
             "items": "/items"
         }
     }
-# Endpoints (updated for MySQL)
+
+# API Endpoints for Guitar Shop database
 @app.get("/orders/{order_id}", response_model=Order)
 async def get_order(order_id: int):
     with get_db_cursor() as cursor:
@@ -154,6 +116,13 @@ async def get_orders_by_date(order_date: str):
 @app.put("/customers/update/{customer_id}", response_model=Customer)
 async def update_customer(customer_id: int, customer: Customer):
     with get_db_cursor() as cursor:
+        # First check if customer exists
+        cursor.execute("SELECT * FROM customers WHERE customer_id = %s", (customer_id,))
+        existing_customer = cursor.fetchone()
+        if not existing_customer:
+            raise HTTPException(status_code=404, detail="Customer not found")
+        
+        # Update the customer
         cursor.execute(
             "UPDATE customers SET email_address = %s, password = %s, first_name = %s, last_name = %s, shipping_address_id = %s, billing_address_id = %s WHERE customer_id = %s",
             (
@@ -166,26 +135,23 @@ async def update_customer(customer_id: int, customer: Customer):
                 customer_id,
             ),
         )
-        if cursor.rowcount == 0:
-            raise HTTPException(status_code=404, detail="Customer not found")
-        # Fetch the updated customer to return
-        cursor.execute("SELECT * FROM customers WHERE customer_id = %s", (customer_id,))
-        updated_customer = cursor.fetchone()
-        return updated_customer
+        
+        # Return the updated data from the request since we know the update succeeded
+        return customer
+
 @app.put("/categories/update/{category_id}", response_model=Category)
 async def update_category(category_id: int, category: Category):
     with get_db_cursor() as cursor:
         cursor.execute(
-            "UPDATE categories SET name = %s, description = %s WHERE category_id = %s",
+            "UPDATE categories SET category_name = %s WHERE category_id = %s",
             (
-                category.name,
-                category.description,
+                category.category_name,
                 category_id,
             ),
         )
         if cursor.rowcount == 0:
             raise HTTPException(status_code=404, detail="Category not found")
-        # Fetch the updated category to return
+        
         cursor.execute("SELECT * FROM categories WHERE category_id = %s", (category_id,))
         updated_category = cursor.fetchone()
         return updated_category
@@ -216,6 +182,81 @@ async def update_order(order_id: int, order: Order):
         cursor.execute("SELECT * FROM orders WHERE order_id = %s", (order_id,))
         updated_order = cursor.fetchone()
         return updated_order
+
+# GET endpoint with query parameters for filtering products
+@app.get("/products", response_model=List[Product])
+async def get_products(
+    category_id: Optional[int] = Query(None),
+    min_price: Optional[float] = Query(None),
+    limit: int = Query(10)
+):
+    query = "SELECT * FROM products WHERE 1=1"
+    params = []
+    
+    if category_id is not None:
+        query += " AND category_id = %s"
+        params.append(category_id)
+    
+    if min_price is not None:
+        query += " AND list_price >= %s"
+        params.append(min_price)
+    
+    query += " LIMIT %s"
+    params.append(limit)
+    
+    with get_db_cursor() as cursor:
+        cursor.execute(query, params)
+        products = cursor.fetchall()
+        return products
+
+# GET endpoint with query parameters for filtering customers
+@app.get("/customers", response_model=List[Customer])
+async def get_customers(
+    first_name: Optional[str] = Query(None),
+    email: Optional[str] = Query(None),
+    limit: int = Query(10)
+):
+    query = "SELECT * FROM customers WHERE 1=1"
+    params = []
+    
+    if first_name is not None:
+        query += " AND first_name LIKE %s"
+        params.append(f"%{first_name}%")
+    
+    if email is not None:
+        query += " AND email_address LIKE %s"
+        params.append(f"%{email}%")
+    
+    query += " LIMIT %s"
+    params.append(limit)
+    
+    with get_db_cursor() as cursor:
+        cursor.execute(query, params)
+        customers = cursor.fetchall()
+        return customers
+
+# PUT endpoint for updating product information
+@app.put("/products/update/{product_id}", response_model=Product)
+async def update_product(product_id: int, product: Product):
+    with get_db_cursor() as cursor:
+        cursor.execute(
+            "UPDATE products SET category_id = %s, product_code = %s, product_name = %s, description = %s, list_price = %s, discount_percent = %s WHERE product_id = %s",
+            (
+                product.category_id,
+                product.product_code,
+                product.product_name,
+                product.description,
+                product.list_price,
+                product.discount_percent,
+                product_id,
+            ),
+        )
+        if cursor.rowcount == 0:
+            raise HTTPException(status_code=404, detail="Product not found")
+        
+        cursor.execute("SELECT * FROM products WHERE product_id = %s", (product_id,))
+        updated_product = cursor.fetchone()
+        return updated_product
 
 if __name__ == "__main__":
     import uvicorn
