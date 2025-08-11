@@ -1,0 +1,11 @@
+problem 
+the billing_address and shipping_address not showing up as foregin keys
+need to make different pages for each different serve ( different FastAPI containers)
+Each router should reference is_vaild
+
+in your driver ( )
+
+
+use http request to call each of the services 
+
+
